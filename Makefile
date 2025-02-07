@@ -10,7 +10,7 @@ PROJ_PATH := ./proj# generated files' path
 BUILD_PATH := $(PROJ_PATH)/build
 SCRIPT_PATH := ./script
 # code path
-HDL_PATH := $(SRC_PATH)/hdl
+HDL_PATH := $(SRC_PATH)/src
 CS_PATH := $(SRC_PATH)/constraints
 BD_PATH := $(SRC_PATH)/blockdesign
 TB_PATH := $(SRC_PATH)/testbench
@@ -75,7 +75,7 @@ ifeq ($(wildcard $(HDL_PATH)/*.v),)
 endif
 ifeq ($(wildcard $(TB_PATH)/*.v),)
 	touch $(TB_PATH)/$(TB).v
-	printf "1ns/1ps\nmodule $(TB)();\n\nendmodule\n" \
+	printf "module $(TB)();\n\nendmodule\n" \
 						> $(TB_PATH)/$(TB).v
 endif
 	echo "add_files -norecurse -fileset sources_1 [glob -nocomplain $(HDL_PATH)/*.v]" \
