@@ -33,8 +33,8 @@ tcl:
 init: 
 	@echo -e "\e[1;34mInit.\e[0m"
 	git init
-	printf "# folder\nproj/\nscript/\n# files\n" 
-						> .gitignore
+	printf "# folder\nproj/\nscript/\n# files\n" \
+						>> .gitignore
 	git add .gitignore
 
 ifneq ($(wildcard $(SCRIPT_PATH)/create_proj.tcl),)
