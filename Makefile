@@ -94,6 +94,7 @@ endif
 	# 					>> $(SCRIPT_PATH)/create_proj.tcl
 	echo "update_compile_order -fileset sources_1" \
 						>> $(SCRIPT_PATH)/create_proj.tcl
+
 	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/create_proj.tcl
 	git add .
 	git commit -m "init"
@@ -129,7 +130,7 @@ endif
 	# 					>> $(SCRIPT_PATH)/sig.tcl
 	echo "report_utilization -file $(BUILD_PATH)/$(TARGET)_utilization.rpt" \
 						>> $(SCRIPT_PATH)/sig.tcl
-	echo "report_utilization -hierarchical -file $(TARGET)_utilization_hierarchical.rpt" \
+	echo "report_utilization -hierarchical -file $(BUILD_PATH)/$(TARGET)_utilization_hierarchical.rpt" \
 						>> $(SCRIPT_PATH)/sig.tcl
 	echo "write_bitstream -force $(BUILD_PATH)/$(TARGET).bit" \
 						>> $(SCRIPT_PATH)/sig.tcl
@@ -138,6 +139,69 @@ endif
 
 	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/sig.tcl
 
+syn:
+	@echo -e "\e[1;34mSynthesis.\e[0m"
+ifneq ($(wildcard $(SCRIPT_PATH)/syn.tcl),)
+	rm $(SCRIPT_PATH)/syn.tcl
+endif
+	echo "open_project $(PROJ_PATH)/$(TARGET).xpr" \
+						>> $(SCRIPT_PATH)/syn.tcl
+
+	echo "reset_runs synth_1" \
+						>> $(SCRIPT_PATH)/syn.tcl
+	echo "set_property top_file "$(HDL_PATH)/$(TARGET).v" [current_fileset]" \
+						>> $(SCRIPT_PATH)/syn.tcl
+	echo "launch_runs synth_1 -jobs 18" \
+						>> $(SCRIPT_PATH)/syn.tcl
+	echo "wait_on_run synth_1" \
+						>> $(SCRIPT_PATH)/syn.tcl
+
+	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/syn.tcl
+
+impl:
+	@echo -e "\e[1;34mImplelentation.\e[0m"
+ifneq ($(wildcard $(SCRIPT_PATH)/impl.tcl),)
+	rm $(SCRIPT_PATH)/impl.tcl
+endif
+	echo "open_project $(PROJ_PATH)/$(TARGET).xpr" \
+						>> $(SCRIPT_PATH)/impl.tcl
+
+	echo "reset_runs impl_1" \
+						>> $(SCRIPT_PATH)/impl.tcl
+	echo "launch_runs impl_1 -jobs 18" \
+						>> $(SCRIPT_PATH)/impl.tcl
+	echo "wait_on_run impl_1" \
+						>> $(SCRIPT_PATH)/impl.tcl
+	echo "open_run impl_1" \
+						>> $(SCRIPT_PATH)/impl.tcl
+	echo "report_timing_summary -file $(BUILD_PATH)/$(TARGET)_timing_summary.rpt" \
+						>> $(SCRIPT_PATH)/impl.tcl
+	echo "report_utilization -file $(BUILD_PATH)/$(TARGET)_utilization.rpt" \
+						>> $(SCRIPT_PATH)/impl.tcl
+	echo "report_utilization -hierarchical -file $(TARGET)_utilization_hierarchical.rpt" \
+						>> $(SCRIPT_PATH)/impl.tcl
+
+	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/impl.tcl
+
+bit:
+	@echo -e "\e[1;34mGenerate bitstream.\e[0m"
+ifneq ($(wildcard $(SCRIPT_PATH)/bit.tcl),)
+	rm $(SCRIPT_PATH)/bit.tcl
+endif
+	echo "open_project $(PROJ_PATH)/$(TARGET).xpr" \
+						>> $(SCRIPT_PATH)/bit.tcl
+
+	echo "open_run impl_1" \
+						>> $(SCRIPT_PATH)/bit.tcl
+	
+	echo "write_bitstream -force $(BUILD_PATH)/$(TARGET).bit" \
+						>> $(SCRIPT_PATH)/bit.tcl
+	echo "write_debug_probes -force $(BUILD_PATH)/$(TARGET).ltx" \
+						>> $(SCRIPT_PATH)/bit.tcl
+
+	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/bit.tcl
+
+
 # clean, full clean(fc2223, USE WITH CAUTION)
 clean:
 	@echo -e "\e[1;31mClean.\e[0m"
@@ -145,7 +209,7 @@ clean:
 
 cc:
 	@echo -e "\e[1;31mClean script and constrains.\e[0m"
-	rm -rf $(SCRIPT_PATH) $(CS_PATH)/$(TARGET).xdc
+	rm -rf $(SCRIPT_PATH)
 
 fc2223:
 	@echo -e "\e[1;31mFull clean(y/n)?\e[0m"
