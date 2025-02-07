@@ -3,11 +3,13 @@ set_property CONFIG_MODE SPIx1 [current_design]
 set_property BITSTREAM.CONFIG.CONFIGRATE 50 [current_design]
 set_property BITSTREAM.CONFIG.SPI_32BIT_ADDR NO [current_design]
 # set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN G22} [get_ports {i_clk}]         # clk
-# set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN C12} [get_ports {b}]      # led   0
+# led   0
+set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN C12} [get_ports {b}]      
 # set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN A13} [get_ports {o_led[1]}]      # led   1
 # set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN C14} [get_ports {o_led[2]}]      # led   2
 # set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN D19} [get_ports {o_led[3]}]      # led   3
-# set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN B15} [get_ports {a}]      # key   0
+# key   0
+set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN B15} [get_ports {a}]      
 # set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN A15} [get_ports {i_key[1]}]      # key   1
 # set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN B14} [get_ports {i_key[2]}]      # key   2
 # set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN A14} [get_ports {i_key[3]}]      # key   3
