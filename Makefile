@@ -4,16 +4,17 @@ TB := tb_$(TARGET)
 FPGA := xc7k325tffg676-2
 # basic path
 XILINX_PATH := D:/Coding/Xilinx/Vivado/2024.2/bin/
+oSRC_PATH := ./osrc
 SRC_PATH := ./src
 IP_PATH := ./ip
 PROJ_PATH := ./proj# generated files' path
 BUILD_PATH := $(PROJ_PATH)/build
 SCRIPT_PATH := ./script
 # code path
-HDL_PATH := $(SRC_PATH)/src
-CS_PATH := $(SRC_PATH)/constraints
-BD_PATH := $(SRC_PATH)/blockdesign
-TB_PATH := $(SRC_PATH)/testbench
+HDL_PATH := $(SRC_PATH)
+CS_PATH := $(oSRC_PATH)/constraints
+BD_PATH := $(oSRC_PATH)/blockdesign
+TB_PATH := $(oSRC_PATH)/testbench
 # ip
 SYSTEM_IP_PATH := $(IP_PATH)/sysip
 MY_IP_PATH := $(IP_PATH)/myip
@@ -50,7 +51,7 @@ endif
 ifeq ($(wildcard $(BUILD_PATH)),)
 	mkdir -p $(BUILD_PATH)
 endif
-ifeq ($(wildcard $(SRC_PATH)),)
+ifeq ($(wildcard $(oSRC_PATH)),)
 	mkdir -p $(HDL_PATH) $(CS_PATH) $(BD_PATH) $(TB_PATH)
 endif
 ifeq ($(wildcard $(IP_PATH)),)
@@ -215,7 +216,7 @@ fc2223:
 	@echo -e "\e[1;31mFull clean(y/n)?\e[0m"
 	@read -p ">> " ans; \
 	if [ "$$ans" == "y" ]; then \
-		rm -rf .gitignore $(PROJ_PATH) $(SCRIPT_PATH) $(SRC_PATH) $(IP_PATH); \
+		rm -rf .gitignore $(PROJ_PATH) $(SCRIPT_PATH) $(oSRC_PATH) $(SRC_PATH) $(IP_PATH); \
 	else \
 		echo -e "\e[1;31mFull clean canceled.\e[0m"; \
 	fi
