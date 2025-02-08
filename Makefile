@@ -61,19 +61,42 @@ endif
 ifeq ($(wildcard $(CFG_PATH)/property.json),)
 	mkdir -p $(CFG_PATH)
 	touch $(CFG_PATH)/property.json
-	printf "{\"arch\" : {\n\
-		\"structure\" : \"custom\",\n\
-		\"prjPath\": \"$${workspace}/proj\",\n\
-		\"hardware\" : {\n\
-			\"src\"  : \"$(HDL_PATH)\", \n\
-			\"sim\"  : \"$(TB_PATH)\",  \n\
-			\"data\" : \"$${workspace}\" \n\
+	printf "{\n\
+		\"toolChain\": \"xilinx\",\n\
+		\"toolVersion\": \"2024.2\",\n\
+		\"prjName\": {\n\
+			\"PL\": \"$(TARGET)\",\n\
+			\"PS\": \"$(TARGET)\"\n\
 		},\n\
-		\"software\" : {\n\
-			\"src\"  : \"$(HDL_PATH)\",\n\
-			\"data\" : \"$${workspace}\" \n\
-		}\n\
-		}\n	}\n" >> $(CFG_PATH)/property.json
+		\"arch\": {\n\
+			\"structure\": \"custom\",\n\
+			\"prjPath\": \"$${workspace}/proj\",\n\
+			\"hardware\": {\n\
+				\"src\": \"$(HDL_PATH)\",\n\
+				\"sim\": \"$(TB_PATH)\",\n\
+				\"data\": \"$${workspace}\"\n\
+			},\n\
+			\"software\": {\n\
+				\"src\": \"$(HDL_PATH)\",\n\
+				\"data\": \"$${workspace}\"\n\
+			}\n\
+		},\n\
+		\"library\": {\n\
+			\"state\": \"local\",\n\
+			\"hardware\": {\n\
+				\"common\": [],\n\
+				\"custom\": []\n\
+			}\n\
+		},\n\
+		\"IP_REPO\": [],\n\
+		\"soc\": {\n\
+			\"core\": \"none\",\n\
+			\"bd\": \"\",\n\
+			\"os\": \"\",\n\
+			\"app\": \"\"\n\
+		},\n\
+		\"device\": \"$(FPGA)\"\n\
+		}\n" >> $(CFG_PATH)/property.json
 endif
 
 	@echo -e "\e[1;34mAdd constrains(according to the board).\e[0m"
