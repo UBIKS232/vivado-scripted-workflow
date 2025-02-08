@@ -3,6 +3,7 @@ TARGET := test
 TB := tb_$(TARGET)
 FPGA := xc7k325tffg676-2
 SIMULATOR := "XSim"
+ARGS = $(filter-out add,$(MAKECMDGOALS))
 # basic path
 XILINX_PATH := D:/Coding/Xilinx/Vivado/2024.2/bin/
 CFG_PATH := ./.vscode
@@ -112,11 +113,13 @@ endif
 	set_property BITSTREAM.CONFIG.CONFIGRATE 50 [current_design]\n\
 	set_property BITSTREAM.CONFIG.SPI_32BIT_ADDR NO [current_design]\n\
 	# set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN G22} [get_ports {i_clk}]         # clk\n\
-	set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN C12} [get_ports {b}]      # led   0\n\
+	# led   0\n\
+	set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN C12} [get_ports {b}]\n\
 	# set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN A13} [get_ports {o_led[1]}]      # led   1\n\
 	# set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN C14} [get_ports {o_led[2]}]      # led   2\n\
 	# set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN D19} [get_ports {o_led[3]}]      # led   3\n\
-	set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN B15} [get_ports {a}]      # key   0\n\
+	# key   0\n\
+	set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN B15} [get_ports {a}]\n\
 	# set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN A15} [get_ports {i_key[1]}]      # key   1\n\
 	# set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN B14} [get_ports {i_key[2]}]      # key   2\n\
 	# set_property -dict { IOSTANDARD LVCMOS33 PACKAGE_PIN A14} [get_ports {i_key[3]}]      # key   3\n\
@@ -235,7 +238,29 @@ endif
 	# set_property -dict {PACKAGE_PIN C17 IOSTANDARD TMDS_33} [get_ports {o_hdmi_d_p[1]}]   # hdmi_d_p   1\n\
 	# set_property -dict {PACKAGE_PIN A18 IOSTANDARD TMDS_33} [get_ports {o_hdmi_d_p[0]}]   # hdmi_d_p   0\n\
 	# set_property -dict {PACKAGE_PIN C19 IOSTANDARD TMDS_33} [get_ports o_hdmi_clk_p]      # hdmi_clk_p\n" \
-						> $(CS_PATH)/$(TARGET).xdc
+						>> $(CS_PATH)/$(TARGET).xdc
+	
+	echo "add_files -norecurse -fileset constrs_1 $(CS_PATH)/$(TARGET).xdc" \
+						>> $(SCRIPT_PATH)/update_const.tcl
+
+	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/update_const.tcl
+
+.PHONY:
+add:
+	@echo -e "\e[1;34mAdd hdl.\e[0m"
+ifneq ($(wildcard $(SCRIPT_PATH)/update_hdl.tcl),)
+	rm $(SCRIPT_PATH)/update_hdl.tcl
+endif
+	touch $(HDL_PATH)/$(ARGS).v
+	printf "module $(ARGS)();\n\nendmodule\n" \
+						>> $(HDL_PATH)/$(ARGS).v
+
+	echo "add_files -norecurse -fileset sources_1 [glob -nocomplain $(HDL_PATH)/$(ARGS).v]" \
+						>> $(SCRIPT_PATH)/update_hdl.tcl
+	echo "update_compile_order -fileset sources_1" \
+						>> $(SCRIPT_PATH)/update_hdl.tcl
+
+	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/update_hdl.tcl
 
 .PHONY:
 sig:
