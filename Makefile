@@ -104,6 +104,9 @@ endif
 # endif
 
 	@echo -e "\e[1;34mAdd constrains(according to the board).\e[0m"
+ifneq ($(wildcard $(CS_PATH)/$(TARGET).xdc),)
+	rm $(CS_PATH)/$(TARGET).xdc
+endif
 	printf "set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 1 [current_design]\n\
 	set_property CONFIG_MODE SPIx1 [current_design]\n\
 	set_property BITSTREAM.CONFIG.CONFIGRATE 50 [current_design]\n\
@@ -191,6 +194,9 @@ endif
 .PHONY:
 cons:
 	@echo -e "\e[1;34mAdd constrains(according to the board).\e[0m"
+ifneq ($(wildcard $(CS_PATH)/$(TARGET).xdc),)
+	rm $(CS_PATH)/$(TARGET).xdc
+endif
 	printf "set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 1 [current_design]\n\
 	set_property CONFIG_MODE SPIx1 [current_design]\n\
 	set_property BITSTREAM.CONFIG.CONFIGRATE 50 [current_design]\n\
@@ -279,16 +285,17 @@ endif
 	echo "open_project $(PROJ_PATH)/$(TARGET).xpr" \
 						>> $(SCRIPT_PATH)/sim.tcl
 
-	echo "set_property top $(TB) [get_filesets sim_1]" \
-						>> $(SCRIPT_PATH)/sim.tcl
-	echo "update_compile_order -fileset sim_1" \
-						>> $(SCRIPT_PATH)/sim.tcl
+	# echo "set_property top $(TB) [get_filesets sim_1]" \
+	# 					>> $(SCRIPT_PATH)/sim.tcl
+	# echo "update_compile_order -fileset sim_1" \
+	# 					>> $(SCRIPT_PATH)/sim.tcl
 	echo "set_property target_simulator $(SIMULATOR) [current_project]" \
 						>> $(SCRIPT_PATH)/sim.tcl
 	echo "launch_simulation -noclean_dir -mode \"behavioral\" " \
 						>> $(SCRIPT_PATH)/sim.tcl
 
 	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/sim.tcl
+	cp $(PROJ_PATH)/$(TARGET).sim/sim_1/behav/xsim/xsim.dir/dump.vcd $(BUILD_PATH)/$(TARGET).vcd
 
 .PHONY:
 syn:
@@ -302,6 +309,8 @@ endif
 	echo "reset_runs synth_1" \
 						>> $(SCRIPT_PATH)/syn.tcl
 	echo "set_property top_file "$(HDL_PATH)/$(TARGET).v" [current_fileset]" \
+						>> $(SCRIPT_PATH)/syn.tcl
+	echo "update_compile_order -fileset sim_1" \
 						>> $(SCRIPT_PATH)/syn.tcl
 	echo "launch_runs synth_1 -jobs 18" \
 						>> $(SCRIPT_PATH)/syn.tcl
@@ -331,7 +340,7 @@ endif
 						>> $(SCRIPT_PATH)/impl.tcl
 	echo "report_utilization -file $(BUILD_PATH)/$(TARGET)_utilization.rpt" \
 						>> $(SCRIPT_PATH)/impl.tcl
-	echo "report_utilization -hierarchical -file $(TARGET)_utilization_hierarchical.rpt" \
+	echo "report_utilization -hierarchical -file $(BUILD_PATH)/$(TARGET)_utilization_hierarchical.rpt" \
 						>> $(SCRIPT_PATH)/impl.tcl
 
 	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/impl.tcl
