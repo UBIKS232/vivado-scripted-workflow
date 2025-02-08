@@ -61,19 +61,19 @@ endif
 ifeq ($(wildcard $(CFG_PATH)/property.json),)
 	mkdir -p $(CFG_PATH)
 	touch $(CFG_PATH)/property.json
-	printf "\"arch\" : {\n\
-	\"structure\" : \"custom\",\n\
-	\"prjPath\": \"$${workspace}/proj\",\n\
-	\"hardware\" : {\n\
-		\"src\"  : \"$(HDL_PATH)\", \n\
-		\"sim\"  : \"$(TB_PATH)\",  \n\
-		\"data\" : \"$${workspace}\" \n\
-	},\n\
-	\"software\" : {\n\
-		\"src\"  : \"$(HDL_PATH)\",\n\
-		\"data\" : \"$${workspace}\" \n\
-	}\n\
-	},\n " >> $(CFG_PATH)/property.json
+	printf "{\"arch\" : {\n\
+		\"structure\" : \"custom\",\n\
+		\"prjPath\": \"$${workspace}/proj\",\n\
+		\"hardware\" : {\n\
+			\"src\"  : \"$(HDL_PATH)\", \n\
+			\"sim\"  : \"$(TB_PATH)\",  \n\
+			\"data\" : \"$${workspace}\" \n\
+		},\n\
+		\"software\" : {\n\
+			\"src\"  : \"$(HDL_PATH)\",\n\
+			\"data\" : \"$${workspace}\" \n\
+		}\n\
+		}\n	}\n" >> $(CFG_PATH)/property.json
 endif
 
 	@echo -e "\e[1;34mAdd constrains(according to the board).\e[0m"
@@ -114,8 +114,8 @@ endif
 	# set_property -dict {PACKAGE_PIN B17 IOSTANDARD TMDS_33} [get_ports {o_hdmi_d_p[2]}]   # hdmi_d_p   2\n\
 	# set_property -dict {PACKAGE_PIN C17 IOSTANDARD TMDS_33} [get_ports {o_hdmi_d_p[1]}]   # hdmi_d_p   1\n\
 	# set_property -dict {PACKAGE_PIN A18 IOSTANDARD TMDS_33} [get_ports {o_hdmi_d_p[0]}]   # hdmi_d_p   0\n\
-	# set_property -dict {PACKAGE_PIN C19 IOSTANDARD TMDS_33} [get_ports o_hdmi_clk_p]      # hdmi_clk_p\n"
-						> $(CS_PATH)/$(TARGET).xdc
+	# set_property -dict {PACKAGE_PIN C19 IOSTANDARD TMDS_33} [get_ports o_hdmi_clk_p]      # hdmi_clk_p\n" \
+						>> $(CS_PATH)/$(TARGET).xdc
 	# cat constraints.xdc > $(CS_PATH)/$(TARGET).xdc
 	# cp constraints.xdc $(CS_PATH)/$(TARGET).xdc
 	echo "add_files -norecurse -fileset constrs_1 $(CS_PATH)/$(TARGET).xdc" \
