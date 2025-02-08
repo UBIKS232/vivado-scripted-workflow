@@ -34,7 +34,7 @@ tcl:
 init: 
 	@echo -e "\e[1;34mInit.\e[0m"
 	git init
-	printf "# folder\n.vscode/\nproj/\nscript/\nnetlist/\n# files\n" \
+	printf "# folder\n.vscode/\nproj/\nscript/\nnetlist/\nicarus/\n# files\n" \
 						>> .gitignore
 	git add .gitignore
 
@@ -155,7 +155,8 @@ ifeq ($(wildcard $(HDL_PATH)/*.v),)
 endif
 ifeq ($(wildcard $(TB_PATH)/*.v),)
 	touch $(TB_PATH)/$(TB).v
-	printf "module $(TB)();\n\nendmodule\n" \
+	printf "`timescale 1ns / 1ps\n\n\
+	module $(TB)();\n\nendmodule\n" \
 						> $(TB_PATH)/$(TB).v
 endif
 	echo "add_files -norecurse -fileset sources_1 [glob -nocomplain $(HDL_PATH)/*.v]" \
@@ -263,6 +264,22 @@ endif
 
 	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/sig.tcl
 
+# iverilog, sim
+.PHONY:
+sim:
+	@echo -e "\e[1;34mAutomatic Simulation.\e[0m"
+ifneq ($(wildcard $(SCRIPT_PATH)/autosim.tcl),)
+	rm $(SCRIPT_PATH)/autosim.tcl
+endif
+	echo "xvlog --incr --relax -prj $(TB_PATH)/$(TB)_vlog.prj -log xvlog.log" \
+						>> $(SCRIPT_PATH)/autosim.tcl
+	echo "xelab --incr --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot $(TB)_behav xil_defaultlib.$(TB) xil_defaultlib.glbl -log elaborate.log" \
+						>> $(SCRIPT_PATH)/autosim.tcl
+	echo "xsim $(TB)_behav -key {Behavioral:sim_1:Functional:$(TB)} -tclbatch $(SCRIPT_PATH)/$(TB).tcl -log simulate.log" \
+						>> $(SCRIPT_PATH)/autosim.tcl
+
+	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/autosim.tcl
+
 .PHONY:
 syn:
 	@echo -e "\e[1;34mSynthesis.\e[0m"
@@ -359,11 +376,6 @@ endif
 clean:
 	@echo -e "\e[1;31mClean.\e[0m"
 	rm -rf $(PROJ_PATH) $(SCRIPT_PATH)
-
-.PHONY:
-cc:
-	@echo -e "\e[1;31mClean script and constrains.\e[0m"
-	rm -rf $(SCRIPT_PATH)
 
 .PHONY:
 fc2223:
