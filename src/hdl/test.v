@@ -1,6 +1,3 @@
-module test(
-        input a,
-        output b
-    );
-    assign b=~a;
+module test();
+
 endmodule
