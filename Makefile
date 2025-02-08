@@ -2,6 +2,7 @@
 TARGET := test
 TB := tb_$(TARGET)
 FPGA := xc7k325tffg676-2
+SIMULATOR := "XSim"
 # basic path
 XILINX_PATH := D:/Coding/Xilinx/Vivado/2024.2/bin/
 CFG_PATH := ./.vscode
@@ -34,6 +35,9 @@ tcl:
 init: 
 	@echo -e "\e[1;34mInit.\e[0m"
 	git init
+ifneq ($(wildcard .gitignore),)
+	rm .gitignore
+endif
 	printf "# folder\n.vscode/\nproj/\nscript/\nnetlist/\nicarus/\n# files\n" \
 						>> .gitignore
 	git add .gitignore
@@ -169,8 +173,10 @@ endif
 	# 					>> $(SCRIPT_PATH)/create_proj.tcl
 	# echo "set_property source_mgmt_mode None [current_project]" \
 	# 					>> $(SCRIPT_PATH)/create_proj.tcl
-	# echo "set_property top $(TARGET) [current_fileset]" \
-	# 					>> $(SCRIPT_PATH)/create_proj.tcl
+	echo "set_property top $(TARGET) [get_filesets sources_1]" \
+						>> $(SCRIPT_PATH)/create_proj.tcl
+	echo "set_property top $(TB) [get_filesets sim_1]" \
+						>> $(SCRIPT_PATH)/create_proj.tcl
 	# echo "set_property source_mgmt_mode All [current_project]" \
 	# 					>> $(SCRIPT_PATH)/create_proj.tcl
 	echo "update_compile_order -fileset sources_1" \
@@ -264,11 +270,25 @@ endif
 
 	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/sig.tcl
 
-# iverilog, sim
 .PHONY:
 sim:
 	@echo -e "\e[1;34mAutomatic Simulation.\e[0m"
-	
+ifneq ($(wildcard $(SCRIPT_PATH)/sim.tcl),)
+	rm $(SCRIPT_PATH)/sim.tcl
+endif
+	echo "open_project $(PROJ_PATH)/$(TARGET).xpr" \
+						>> $(SCRIPT_PATH)/sim.tcl
+
+	echo "set_property top $(TB) [get_filesets sim_1]" \
+						>> $(SCRIPT_PATH)/sim.tcl
+	echo "update_compile_order -fileset sim_1" \
+						>> $(SCRIPT_PATH)/sim.tcl
+	echo "set_property target_simulator $(SIMULATOR) [current_project]" \
+						>> $(SCRIPT_PATH)/sim.tcl
+	echo "launch_simulation -noclean_dir -mode \"behavioral\" " \
+						>> $(SCRIPT_PATH)/sim.tcl
+
+	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/sim.tcl
 
 .PHONY:
 syn:
