@@ -58,46 +58,46 @@ ifeq ($(wildcard $(IP_PATH)),)
 	mkdir -p $(SYSTEM_IP_PATH) $(MY_IP_PATH)
 endif
 
-ifeq ($(wildcard $(CFG_PATH)/property.json),)
-	mkdir -p $(CFG_PATH)
-	touch $(CFG_PATH)/property.json
-	printf "{\n\
-		\"toolChain\": \"xilinx\",\n\
-		\"toolVersion\": \"2024.2\",\n\
-		\"prjName\": {\n\
-			\"PL\": \"$(TARGET)\",\n\
-			\"PS\": \"$(TARGET)\"\n\
-		},\n\
-		\"arch\": {\n\
-			\"structure\": \"custom\",\n\
-			\"prjPath\": \"$${workspace}/proj\",\n\
-			\"hardware\": {\n\
-				\"src\": \"$(HDL_PATH)\",\n\
-				\"sim\": \"$(TB_PATH)\",\n\
-				\"data\": \"$${workspace}\"\n\
-			},\n\
-			\"software\": {\n\
-				\"src\": \"$(HDL_PATH)\",\n\
-				\"data\": \"$${workspace}\"\n\
-			}\n\
-		},\n\
-		\"library\": {\n\
-			\"state\": \"local\",\n\
-			\"hardware\": {\n\
-				\"common\": [],\n\
-				\"custom\": []\n\
-			}\n\
-		},\n\
-		\"IP_REPO\": [],\n\
-		\"soc\": {\n\
-			\"core\": \"none\",\n\
-			\"bd\": \"\",\n\
-			\"os\": \"\",\n\
-			\"app\": \"\"\n\
-		},\n\
-		\"device\": \"$(FPGA)\"\n\
-		}\n" >> $(CFG_PATH)/property.json
-endif
+# ifeq ($(wildcard $(CFG_PATH)/property.json),)
+# 	mkdir -p $(CFG_PATH)
+# 	touch $(CFG_PATH)/property.json
+# 	printf "{\n\
+# 		\"toolChain\": \"xilinx\",\n\
+# 		\"toolVersion\": \"2024.2\",\n\
+# 		\"prjName\": {\n\
+# 			\"PL\": \"$(TARGET)\",\n\
+# 			\"PS\": \"$(TARGET)\"\n\
+# 		},\n\
+# 		\"arch\": {\n\
+# 			\"structure\": \"custom\",\n\
+# 			\"prjPath\": \"$${workspace}/proj\",\n\
+# 			\"hardware\": {\n\
+# 				\"src\": \"$(HDL_PATH)\",\n\
+# 				\"sim\": \"$(TB_PATH)\",\n\
+# 				\"data\": \"$${workspace}\"\n\
+# 			},\n\
+# 			\"software\": {\n\
+# 				\"src\": \"$(HDL_PATH)\",\n\
+# 				\"data\": \"$${workspace}\"\n\
+# 			}\n\
+# 		},\n\
+# 		\"library\": {\n\
+# 			\"state\": \"local\",\n\
+# 			\"hardware\": {\n\
+# 				\"common\": [],\n\
+# 				\"custom\": []\n\
+# 			}\n\
+# 		},\n\
+# 		\"IP_REPO\": [],\n\
+# 		\"soc\": {\n\
+# 			\"core\": \"none\",\n\
+# 			\"bd\": \"\",\n\
+# 			\"os\": \"\",\n\
+# 			\"app\": \"\"\n\
+# 		},\n\
+# 		\"device\": \"$(FPGA)\"\n\
+# 		}\n" >> $(CFG_PATH)/property.json
+# endif
 
 	@echo -e "\e[1;34mAdd constrains(according to the board).\e[0m"
 	printf "set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 1 [current_design]\n\
@@ -363,14 +363,14 @@ clean:
 .PHONY:
 cc:
 	@echo -e "\e[1;31mClean script and constrains.\e[0m"
-	rm -rf $(SCRIPT_PATH) $(CFG_PATH)
+	rm -rf $(SCRIPT_PATH)
 
 .PHONY:
 fc2223:
 	@echo -e "\e[1;31mFull clean(y/n)?\e[0m"
 	@read -p ">> " ans; \
 	if [ "$$ans" == "y" ]; then \
-		rm -rf .gitignore ./netlist ./icarus $(CFG_PATH) $(PROJ_PATH) $(SCRIPT_PATH) $(SRC_PATH) $(IP_PATH); \
+		rm -rf .gitignore .netlist .icarus $(PROJ_PATH) $(SCRIPT_PATH) $(SRC_PATH) $(IP_PATH); \
 	else \
 		echo -e "\e[1;31mFull clean canceled.\e[0m"; \
 	fi
