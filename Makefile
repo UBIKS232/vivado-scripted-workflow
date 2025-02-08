@@ -268,17 +268,7 @@ endif
 .PHONY:
 sim:
 	@echo -e "\e[1;34mAutomatic Simulation.\e[0m"
-ifneq ($(wildcard $(SCRIPT_PATH)/autosim.tcl),)
-	rm $(SCRIPT_PATH)/autosim.tcl
-endif
-	echo "xvlog --incr --relax -prj $(TB_PATH)/$(TB)_vlog.prj -log xvlog.log" \
-						>> $(SCRIPT_PATH)/autosim.tcl
-	echo "xelab --incr --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot $(TB)_behav xil_defaultlib.$(TB) xil_defaultlib.glbl -log elaborate.log" \
-						>> $(SCRIPT_PATH)/autosim.tcl
-	echo "xsim $(TB)_behav -key {Behavioral:sim_1:Functional:$(TB)} -tclbatch $(SCRIPT_PATH)/$(TB).tcl -log simulate.log" \
-						>> $(SCRIPT_PATH)/autosim.tcl
-
-	vivado $(VIVADO_BATCH_FLAGS) -source $(SCRIPT_PATH)/autosim.tcl
+	
 
 .PHONY:
 syn:

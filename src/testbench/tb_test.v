@@ -11,13 +11,13 @@ module tb_test;
 
     initial begin
         a <= 1'b0;
-        #100;
+        #10;
         a <= 1'b1;
-        #100;
+        #10;
         a <= 1'b0;
-        #100;
+        #10;
         a <= 1'b1;
-        #100;
+        #10;
         $stop;
     end
 
