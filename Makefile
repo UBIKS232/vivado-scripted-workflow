@@ -248,7 +248,7 @@ isim:
 	rm -rf $(ICARUS_PATH)
 	mkdir -p $(ICARUS_PATH)
 	iverilog -o $(ICARUS_PATH)/wave $(TB_PATH)/*.v $(HDL_PATH)/*.v
-	vvp -n $(ICARUS_PATH)/wave -lxt2
+	vvp -n -lxt2 $(ICARUS_PATH)/wave
 
 .PHONY:
 syn:

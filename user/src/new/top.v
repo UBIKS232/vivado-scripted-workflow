@@ -1,28 +1,29 @@
+/*
+Simple UART
+Input:
+    rx
+Output:
+    tx
+Internal signals:
+    clk
+*/
 module top(
     input clk,
-    input rst_n,
-
-    output reg led
+    input rst,
+    input l2b,
+    input oe,
+    input rx,
+    output [7:0]test
 );
 
-reg [7:0] cnt;
-
-always @ (posedge clk)
-begin
-    if(!rst_n)
-        cnt <= 0;
-    else if(cnt >= 10)
-        cnt <= 0;
-    else 
-        cnt <= cnt + 1;
-end
-
-always @ (posedge clk)
-begin
-    if(!rst_n)
-        led <= 0;
-    else if(cnt == 10)
-        led <= !led;
-end
+    hc595 u_hc595(
+        .clk 	(clk  ),
+        .l2b 	(l2b  ),
+        .rst 	(rst  ),
+        .ser 	(rx  ),
+        .oe  	(oe   ),
+        .pr  	(test   )
+    );
 
 endmodule
+

@@ -13,6 +13,10 @@
             | - testbench
             | - blockdesign
 
+# WARNING
+
+    **用vvp产生波形时, -lxt2必须写在前面, 否则不会产生波形!!!! 排查了很久.**
+
 # Reference
 
 - [Xilinx-UG894.](https://www.xilinx.com/support/documents/sw_manuals/xilinx2022_2/ug894-vivado-tcl-scripting.pdf)

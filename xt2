@@ -1,0 +1,2 @@
+VCD info: dumpfile ./prj/icarus/wave.vcd opened for output.
+./user/sim/new/tb_top.v:43: $finish called at 950000 (1ps)
