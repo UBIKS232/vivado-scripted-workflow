@@ -97,8 +97,8 @@ ifeq ($(wildcard $(TB_PATH)/*.v),)
 		/*iverilog */\n\
 		initial\n\
 		begin\n\
-			\$dumpfile(\"$(TB).vcd\");\n\
-			\$dumpvars(0, $(TB));\n\
+			$$dumpfile(\"$(TB).vcd\");\n\
+			$$dumpvars(0, $(TB));\n\
 		end\n\
 		/*iverilog */\n\n\n\
 	endmodule\n\n" \
