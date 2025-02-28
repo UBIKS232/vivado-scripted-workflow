@@ -2,11 +2,11 @@
 TARGET := top
 TB := tb_$(TARGET)
 FPGA :=xc7z020clg400-2# xc7k325tffg676-2
-SIMULATOR := "XSim"
 ARGS = $(filter-out add,$(MAKECMDGOALS))
+XILINX_PATH := D:/Coding/Xilinx/Vivado/2024.2/bin/
 
 # basic path, based on digital-ide structure
-XILINX_PATH := D:/Coding/Xilinx/Vivado/2024.2/bin/
+
 CFG_PATH := ./.vscode
 USR_PATH := ./user
 BUILD_PATH := ./prj# generated files' path
@@ -23,6 +23,7 @@ IP_PATH := $(USR_PATH)/ip# not sure
 SCRIPT_PATH := $(USR_PATH)/script
 
 # flags
+SIMULATOR := "XSim"
 VIVADO_FLAGS := -nojournal -nolog
 VIVADO_TCL_FLGAS := $(VIVADO_FLAGS) -mode tcl
 VIVADO_BATCH_FLAGS := $(VIVADO_FLAGS) -mode batch -tempDir $(PROJ_PATH)
@@ -86,13 +87,21 @@ endif
 	@echo -e "\e[1;34mAdd source and testbench.\e[0m"
 ifeq ($(wildcard $(HDL_PATH)/*.v),)
 	touch $(HDL_PATH)/$(TARGET).v
-	printf "module $(TARGET)();\n\nendmodule\n" \
+	printf "module $(TARGET)();\n\nendmodule\n\n" \
 		>> $(HDL_PATH)/$(TARGET).v
 endif
 ifeq ($(wildcard $(TB_PATH)/*.v),)
 	touch $(TB_PATH)/$(TB).v
 	printf "\`timescale 1ns / 1ps\n\n\
-	module $(TB)();\n\nendmodule\n" \
+	module $(TB)();\n\n\
+	/*iverilog */\n\
+	initial\n\
+	begin\n\
+		$dumpfile("$(TB).vcd");\n\
+		$dumpvars(0, $(TB));\n\
+	end\n\
+	/*iverilog */\n\
+	endmodule\n\n" \
 		>> $(TB_PATH)/$(TB).v
 endif
 
@@ -227,7 +236,8 @@ endif
 .PHONY:
 isim:
 	@echo -e "\e[1;34mAutomatic Simulation(Icarus).\e[0m"
-
+	iverilog -g2005 -o $(ICARUS_PATH)/$(TARGET) -s $(TARGET) $(HDL_PATH)/*.v $(TB_PATH)/*.v
+	vvp -n $(ICARUS_PATH)/$(TARGET) -ltx2
 
 .PHONY:
 syn:
