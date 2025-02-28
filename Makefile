@@ -94,13 +94,13 @@ ifeq ($(wildcard $(TB_PATH)/*.v),)
 	touch $(TB_PATH)/$(TB).v
 	printf "\`timescale 1ns / 1ps\n\n\
 	module $(TB)();\n\n\
-	/*iverilog */\n\
-	initial\n\
-	begin\n\
-		$dumpfile("$(TB).vcd");\n\
-		$dumpvars(0, $(TB));\n\
-	end\n\
-	/*iverilog */\n\
+		/*iverilog */\n\
+		initial\n\
+		begin\n\
+			\$dumpfile(\"$(TB).vcd\");\n\
+			\$dumpvars(0, $(TB));\n\
+		end\n\
+		/*iverilog */\n\n\n\
 	endmodule\n\n" \
 		>> $(TB_PATH)/$(TB).v
 endif
