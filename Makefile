@@ -11,8 +11,8 @@ CFG_PATH := ./.vscode
 USR_PATH := ./user
 BUILD_PATH := ./prj# generated files' path
 PROJ_PATH := $(BUILD_PATH)/xilinx
-ICARUS_PATH := $(USR_PATH)/icarus
-NETLIST_PATH := $(USR_PATH)/netlist
+ICARUS_PATH := $(BUILD_PATH)/icarus
+NETLIST_PATH := ./netlist
 
 # code path
 HDL_PATH := $(USR_PATH)/src/new
@@ -62,6 +62,8 @@ endif
 	@echo -e "\e[1;34mAdd .gitignore.\e[0m"
 	printf "# folder\n\
 	.vscode/\n\
+	netlist/\n\
+	icarus/\n\
 	prj/\n\
 	.Xil/\n\
 	# files\n" \
@@ -92,15 +94,22 @@ ifeq ($(wildcard $(HDL_PATH)/*.v),)
 endif
 ifeq ($(wildcard $(TB_PATH)/*.v),)
 	touch $(TB_PATH)/$(TB).v
+	# "\$$" is a little bit tricky
 	printf "\`timescale 1ns / 1ps\n\n\
-	module $(TB)();\n\n\
-		/*iverilog */\n\
-		initial\n\
-		begin\n\
-			$$dumpfile(\"$(TB).vcd\");\n\
-			$$dumpvars(0, $(TB));\n\
-		end\n\
-		/*iverilog */\n\n\n\
+	module $(TB);\n\
+	    /*iverilog */\n\
+	    initial\n\
+	    begin\n\
+	        \$$dumpfile(\"$(ICARUS_PATH)/$(TB).vcd\");\n\
+	        \$$dumpvars(0, $(TB));\n\
+	    end\n\
+	    /*iverilog */\n\n\
+	    reg clk;\n\
+	    reg rst;\n\
+	    always #1 clk <= ~clk;\n\n\
+	    initial begin\n\n\n\n\
+	        #200 \$$finish;\n\
+	    end\n\n\
 	endmodule\n\n" \
 		>> $(TB_PATH)/$(TB).v
 endif
@@ -180,7 +189,7 @@ endif
 	printf "module $(ARGS)();\n\nendmodule\n" \
 		>> $(HDL_PATH)/$(ARGS).v
 
-	echo "add_files -norecurse -fileset sources_1 [glob -nocomplain $(HDL_PATH)/$(ARGS).v] \n\
+	printf "add_files -norecurse -fileset sources_1 [glob -nocomplain $(HDL_PATH)/$(ARGS).v] \n\
 	update_compile_order -fileset sources_1 \n"\
 		>> $(SCRIPT_PATH)/update_hdl.tcl
 
@@ -236,8 +245,10 @@ endif
 .PHONY:
 isim:
 	@echo -e "\e[1;34mAutomatic Simulation(Icarus).\e[0m"
-	iverilog -g2005 -o $(ICARUS_PATH)/$(TARGET) -s $(TARGET) $(HDL_PATH)/*.v $(TB_PATH)/*.v
-	vvp -n $(ICARUS_PATH)/$(TARGET) -ltx2
+	rm -rf $(ICARUS_PATH)
+	mkdir -p $(ICARUS_PATH)
+	iverilog -o $(ICARUS_PATH)/wave $(TB_PATH)/*.v $(HDL_PATH)/*.v
+	vvp -n $(ICARUS_PATH)/wave -lxt2
 
 .PHONY:
 syn:
@@ -336,7 +347,7 @@ endif
 .PHONY:
 clean:
 	@echo -e "\e[1;31mClean.\e[0m"
-	rm -rf $(PROJ_PATH) $(ICARUS_PATH) $(NETLIST_PATH) $(SCRIPT_PATH)
+	rm -rf $(ICARUS_PATH) $(NETLIST_PATH) $(SCRIPT_PATH)
 
 .PHONY:
 fc2223:
