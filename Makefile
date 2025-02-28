@@ -54,9 +54,6 @@ endif
 ifeq ($(wildcard $(USR_PATH)),)
 	mkdir -p $(HDL_PATH) $(CS_PATH) $(BD_PATH) $(TB_PATH)
 endif
-ifeq ($(wildcard $(IP_PATH)),)
-	mkdir -p $(SYSTEM_IP_PATH) $(MY_IP_PATH)
-endif
 ifneq ($(wildcard $(CS_PATH)/$(TARGET).xdc),)
 	rm $(CS_PATH)/$(TARGET).xdc
 endif
