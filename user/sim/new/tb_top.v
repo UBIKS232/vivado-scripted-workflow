@@ -1,24 +1,44 @@
-`timescale 1ns / 1ps
+`timescale 1ns/100ps
 
-module tb_top;
-    /*iverilog */
-    initial
-    begin
-        $dumpfile("./prj/icarus/tb_top.vcd");
-        $dumpvars(0, tb_top);
-    end
-    /*iverilog */
+module led_demo_tb;
 
-    reg clk;
-    reg rst;
-    always #1 clk <= ~clk;
+parameter SYSCLK_PERIOD = 10;
 
-    initial begin
+reg SYSCLK;
+reg NSYSRESET;
 
+initial
+begin
+    SYSCLK = 1'b0;
+    NSYSRESET = 1'b0;
+end
 
+/*iverilog */
+initial
+begin            
+    $dumpfile("./prj/icarus/wave.vcd");        //生成的vcd文件名称
+    $dumpvars(0, led_demo_tb);    //tb模块名称
+end
+/*iverilog */
 
-        #200 $finish;
-    end
+initial
+begin
+    #(SYSCLK_PERIOD * 10 )
+        NSYSRESET = 1'b1;
+    #1000
+        $stop;
+end
+
+always @(SYSCLK)
+    #(SYSCLK_PERIOD / 2.0) SYSCLK <= !SYSCLK;
+
+top led_demo_ut0 (
+    // Inputs
+    .rst_n(NSYSRESET),
+    .clk(SYSCLK),
+
+    // Outputs
+    .led( led)
+);
 
 endmodule
-
