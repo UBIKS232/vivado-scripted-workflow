@@ -63,10 +63,11 @@ endif
 	printf "# folder\n\
 	.vscode/\n\
 	netlist/\n\
-	icarus/\n\
-	prj/\n\
+	!./prj/icarus/\n\
+	./prj/xilinx/\n\
 	.Xil/\n\
-	# files\n" \
+	# files\n\
+	xt2/\n" \
 		>> .gitignore
 	git add .gitignore
 
@@ -354,7 +355,7 @@ fc2223:
 	@echo -e "\e[1;31mFull clean(y/n)?\e[0m"
 	@read -p ">> " ans; \
 	if [ "$$ans" == "y" ]; then \
-		rm -rf .gitignore $(PROJ_PATH) $(SCRIPT_PATH) $(USR_PATH) $(IP_PATH) $(NETLIST_PATH); \
+		rm -rf .gitignore $(BUILD_PATH) $(USR_PATH) $(NETLIST_PATH) xt2; \
 	else \
 		echo -e "\e[1;31mFull clean canceled.\e[0m"; \
 	fi

@@ -1,6 +1,0 @@
-set_property IOSTANDARD LVCMOS33 [get_ports out]
-set_property IOSTANDARD LVCMOS33 [get_ports rst]
-set_property IOSTANDARD LVCMOS33 [get_ports clk]
-set_property PACKAGE_PIN K16 [get_ports out]
-set_property PACKAGE_PIN N18 [get_ports clk]
-set_property PACKAGE_PIN G19 [get_ports rst]
