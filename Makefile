@@ -10,7 +10,7 @@ XILINX_PATH := D:/Coding/Xilinx/Vivado/2024.2/bin/
 CFG_PATH := ./.vscode
 USR_PATH := ./user
 BUILD_PATH := ./prj# generated files' path
-PROJ_PATH := $(PROJ_PATH)/xilinx
+PROJ_PATH := $(BUILD_PATH)/xilinx
 ICARUS_PATH := $(USR_PATH)/icarus
 NETLIST_PATH := $(USR_PATH)/netlist
 
@@ -326,7 +326,7 @@ endif
 .PHONY:
 clean:
 	@echo -e "\e[1;31mClean.\e[0m"
-	rm -rf $(PROJ_PATH) $(SCRIPT_PATH)
+	rm -rf $(PROJ_PATH) $(ICARUS_PATH) $(NETLIST_PATH) $(SCRIPT_PATH)
 
 .PHONY:
 fc2223:

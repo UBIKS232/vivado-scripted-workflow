@@ -1,4 +1,4 @@
-create_project -force -part xc7z020clg400-2 top /xilinx
+create_project -force -part xc7z020clg400-2 top ./prj/xilinx
 add_files -norecurse -fileset constrs_1 ./user/data/new/top.xdc
 add_files -norecurse -fileset sources_1 [glob -nocomplain ./user/src/new/*.v] 
 add_files -norecurse -fileset sim_1 [glob -nocomplain ./user/sim/new/*.v] 
